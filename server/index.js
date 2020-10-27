@@ -20,7 +20,7 @@ app.listen(5000, () => {
 
 //crea/carica database
 const db = new Datastore({
-    filename: "data.db",
+    filename: "./collections/data.db",
     autoload: true,
 })
 
