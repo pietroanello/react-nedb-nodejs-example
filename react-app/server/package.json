@@ -1,0 +1,25 @@
+{
+  "name": "gestore-asta",
+  "version": "1.0.0",
+  "description": "Gestore asta Fantacalcio Serie A",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [
+    "asta",
+    "fantacalcio",
+    "serie",
+    "a",
+    "calciatori"
+  ],
+  "author": "Pietro Anello",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nedb": "^1.8.0",
+    "nodemon": "^2.0.6"
+  },
+  "type": "module"
+}
