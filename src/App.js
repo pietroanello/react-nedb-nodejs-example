@@ -1,49 +1,36 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 
-class App extends React.Component {
-    state = {
-        users: [],
-        newName: "",
-        newSurname: "",
-    }
+function App() {
+    const [users, updateUsers] = useState([])
+    const [userData, updateUserData] = useState({ name: "", surname: "" })
 
-    componentDidMount() {
-        this.updateData()
-    }
+    useEffect(() => {
+        updateData()
+    }, [users])
 
-    updateData = () => {
+    function updateData() {
         fetch("/getData")
             .then(response => response.json())
             .then(data => {
-                this.setState({
-                    users: data,
-                    newName: "",
-                    newSurname: "",
-                })
+                updateUsers(data)
             })
     }
 
-    addData = event => {
+    function addData(event) {
         event.preventDefault()
-        const data = {
-            name: this.state.newName,
-            surname: this.state.newSurname,
-        }
         const options = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(userData),
         }
         fetch("/postData", options)
             .then(response => response.json())
-            .then(data => {
-                this.updateData()
-            })
+            .then(updateData())
     }
 
-    deleteData = event => {
+    function deleteData(event) {
         const data = {
             id: event.target.parentElement.attributes.id.value,
         }
@@ -57,65 +44,54 @@ class App extends React.Component {
         fetch("/deleteData", options)
             .then(response => response.json())
             .then(data => {
-                this.setState(prevState => {
-                    let newArray = prevState.users
-                    let pos = prevState.users
+                updateUsers(prev => {
+                    let newArray = prev
+                    let pos = prev
                         .map(function (e) {
                             return e._id
                         })
                         .indexOf(data)
                     newArray.splice(pos, 1)
-                    return {
-                        ...prevState,
-                        users: newArray,
-                    }
+                    return newArray
                 })
             })
     }
 
-    handleChange = event => {
+    function handleChange(event) {
         const { name, value } = event.target
-        this.setState(prevState => {
-            return {
-                ...prevState,
-                [name]: value,
-            }
-        })
+        updateUserData(prev => ({ ...prev, [name]: value }))
     }
 
-    render() {
-        const { users, newName, newSurname } = this.state
-        return (
-            <div>
-                <ul className='users'>
-                    {users.map(user => (
-                        <li id={user._id} className='user'>
-                            <p>
-                                <strong>Name:</strong>
-                                {user.name} {user.surname}
-                            </p>
-                            <span onClick={this.deleteData}>Delete User</span>
-                        </li>
-                    ))}
-                </ul>
-                <form onSubmit={this.addData}>
-                    <input
-                        type='text'
-                        name='newName'
-                        value={newName}
-                        onChange={this.handleChange}
-                    />
-                    <input
-                        type='text'
-                        name='newSurname'
-                        value={newSurname}
-                        onChange={this.handleChange}
-                    />
-                    <button type='submit'>Add User</button>
-                </form>
-            </div>
-        )
-    }
+    return (
+        <div>
+            <ul className='users'>
+                {users.map(user => (
+                    <li id={user._id} className='user'>
+                        <p>
+                            <strong>Name:</strong>
+                            {user.name} {user.surname}
+                        </p>
+                        <span onClick={deleteData}>Delete User</span>
+                    </li>
+                ))}
+            </ul>
+            <form onSubmit={addData}>
+                <input
+                    type='text'
+                    name='name'
+                    placeholder='First Name'
+                    onChange={handleChange}
+                />
+                <input
+                    type='text'
+                    name='surname'
+                    placeholder='Last Name'
+                    onChange={handleChange}
+                />
+                <button>Add User</button>
+            </form>
+        </div>
+    )
 }
 
 export default App

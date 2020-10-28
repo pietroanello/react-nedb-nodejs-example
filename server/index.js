@@ -34,7 +34,7 @@ app.get("/getData", (request, response) => {
 app.post("/postData", (request, response) => {
     let newData = request.body
     db.insert(newData)
-    response.json(newData)
+    response.json("OK")
 })
 
 //delete data
