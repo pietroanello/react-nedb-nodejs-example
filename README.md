@@ -1,4 +1,4 @@
-# Simple React App with NodeJS Express that save data with neDB [...in progress with updates]
+# Simple React App with NodeJS Express that save data with neDB
 
 A simple app that stores form data in neDB database and return it in a component with a fetch request.
 
