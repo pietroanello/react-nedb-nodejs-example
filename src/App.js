@@ -6,12 +6,13 @@ class App extends React.Component {
         newName: "",
         newSurname: "",
     }
+
     componentDidMount() {
         this.updateData()
     }
 
     updateData = () => {
-        fetch("/api")
+        fetch("/getData")
             .then(response => response.json())
             .then(data => {
                 this.setState({
@@ -35,11 +36,40 @@ class App extends React.Component {
             },
             body: JSON.stringify(data),
         }
-        fetch("/api", options)
+        fetch("/postData", options)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 this.updateData()
+            })
+    }
+
+    deleteData = event => {
+        const data = {
+            id: event.target.parentElement.attributes.id.value,
+        }
+        const options = {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        }
+        fetch("/deleteData", options)
+            .then(response => response.json())
+            .then(data => {
+                this.setState(prevState => {
+                    let newArray = prevState.users
+                    let pos = prevState.users
+                        .map(function (e) {
+                            return e._id
+                        })
+                        .indexOf(data)
+                    newArray.splice(pos, 1)
+                    return {
+                        ...prevState,
+                        users: newArray,
+                    }
+                })
             })
     }
 
@@ -59,11 +89,12 @@ class App extends React.Component {
             <div>
                 <ul className='users'>
                     {users.map(user => (
-                        <li className='user'>
+                        <li id={user._id} className='user'>
                             <p>
                                 <strong>Name:</strong>
                                 {user.name} {user.surname}
                             </p>
+                            <span onClick={this.deleteData}>Delete User</span>
                         </li>
                     ))}
                 </ul>
